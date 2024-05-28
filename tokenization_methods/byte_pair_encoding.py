@@ -77,9 +77,13 @@ class BytePairEncoding(TokenizationMethod):
 
     def tokenize_text(self, vocabulary, text: str):
         tokenized_text = []
-        # Replace all individual characters (and spaces) with tokens
+
+        # Replace spaces with its own token
+        text = text.replace(BytePairEncoding.__space_char, BytePairEncoding.__space_token)
+
+        # Replace all individual characters with tokens
         for c in text:
-            tokenized_text.append(BytePairEncoding.__space_token if c==BytePairEncoding.__space_char else c)
+            tokenized_text.append(next(tk for (tk,seq) in vocabulary if seq==c))
             
         # Make it have the shape of a corpus
         tokenized_text = [tokenized_text]
