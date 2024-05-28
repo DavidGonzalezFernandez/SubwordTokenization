@@ -1,23 +1,38 @@
-from typing import Dict, List, Union, Tuple
+from typing import List
 from .tokenization_method import TokenizationMethod
 
 class BytePairEncoding(TokenizationMethod):
-    def create_vocabulary(self, corpus: List[str], vocab_size: int) -> Dict[int, Tuple[Union[str,int],Union[str, int]]]:
-        # The vocab (the keys are the tokens, the values are the sequences)
-        vocab = {}
-        
-        # Create a token for whitespace
-        space = " "
-        space_token = self.__create_token(vocab, space)
+    __space_token = "_"
+    __space_char = " "
 
+    def create_vocabulary(self, corpus: List[str], vocab_size: int) -> List[tuple]:
+        # The vocab (the keys are the tokens, the values are the sequences)
+        vocab = []
+
+        # Replace the whitespace with some other character
+        for i,sentence in enumerate(corpus):
+            corpus[i] = sentence.replace(BytePairEncoding.__space_char, BytePairEncoding.__space_token)
+        
+        # Set to keep track of the individual characters that are inside the vocabulary
+        added_characters = set()
+
+        # Preprocess:
         # Convert the corpus into a list of lists
-        tokenized_corpus: List[List[Union[str, int]]] = []
+        # Create a new token for each individual character in the corpus
+        # Convert all the characters into tokens
+        tokenized_corpus: List[list] = []
         for sentence in corpus:
             tokenized_corpus.append([])
             for c in sentence:
-                tokenized_corpus[-1].append(space_token if c==space else c)
+                if c not in added_characters:
+                    self.__create_token(vocab, c, c)
+                    added_characters.add(c)
+                tokenized_corpus[-1].append(c)
+        
         del corpus
+        del added_characters
 
+        # Iterate until the vocabulary reaches the maximum length
         while len(vocab) < vocab_size:
             pair = self.__get_most_frequent_pair(tokenized_corpus)
             if pair is None:
@@ -27,23 +42,18 @@ class BytePairEncoding(TokenizationMethod):
 
         return vocab
     
-    def __create_token(self, current_vocab, sequence_of_tokens: Union[str, Tuple[Union[str,int],Union[str, int]]]):
+    def __create_token(self, current_vocab, sequence_of_tokens, new_token=None):
         """Given a sequence creates a new token and adds it to the vocabulary"""
-        new_token = len(current_vocab)
-        current_vocab[new_token] = sequence_of_tokens
+        if new_token is None:
+            new_token = len(current_vocab)
+        current_vocab.append((new_token, sequence_of_tokens))
         return new_token
     
-    def __merge_tokens(
-        self,
-        list_of_tokenized_sentences: List[List[Union[str, int]]],
-        sequence_of_tokens: Tuple[Union[str,int],Union[str, int]],
-        replacement: int
-    ):
+    def __merge_tokens(self, list_of_tokenized_sentences: List[list], sequence_of_tokens, replacement: int):
         """Merges a sequence into a token"""
         replacement = [replacement]
         sequence_of_tokens = list(sequence_of_tokens)
         sequence_length = len(sequence_of_tokens)
-        assert sequence_length == 2
 
         for sentence in list_of_tokenized_sentences:
             i = 0
@@ -54,7 +64,7 @@ class BytePairEncoding(TokenizationMethod):
                 else:
                     i += 1
 
-    def __get_most_frequent_pair(self, corpus: List[List[Union[str, int]]]):
+    def __get_most_frequent_pair(self, corpus: List[list]):
         pairs = {}
         for sentence in corpus:
             for t1,t2 in zip(sentence, sentence[1:]):
@@ -66,22 +76,17 @@ class BytePairEncoding(TokenizationMethod):
             return None
 
     def tokenize_text(self, vocabulary, text: str):
-        space = " "
-        space_token = 0
-        assert vocabulary[space_token] == space
-
         tokenized_text = []
-        # Replace all the spaces with space token
+        # Replace all individual characters (and spaces) with tokens
         for c in text:
-            tokenized_text.append(space_token if c==space else c)
+            tokenized_text.append(BytePairEncoding.__space_token if c==BytePairEncoding.__space_char else c)
             
-        # Make it have the shape of corpus
+        # Make it have the shape of a corpus
         tokenized_text = [tokenized_text]
 
         # Iterate over the text and replace a pair of tokens (or chars) with their token
         # Replace tokens in the same order as they were created
-        for token in range(1, len(vocabulary.keys())):
-            sequence = vocabulary[token]
+        for token,sequence in vocabulary:
             self.__merge_tokens(tokenized_text, sequence, token)
         
         return tokenized_text[0]
