@@ -88,6 +88,27 @@ class WordPiece(TokenizationMethod):
         else:
             return None
     
-    # TODO: implement
     def tokenize_text(self, vocabulary, text: str):
-        raise NotImplementedError()
+        tokenized_text = []
+
+        # Replace all individual characters with tokens
+        is_last_space = True
+        for c in text:
+            is_space = c == self.__space_char
+            tokenized_text.append(
+                next(
+                    tk
+                    for (tk,seq) in vocabulary
+                    if seq==(c if (is_space or is_last_space) else self.__prefix_char_inside_word+c)
+                )
+            )
+            is_last_space = is_space
+
+        # Make it have the shape of a corpus
+        tokenized_text = [tokenized_text]
+        
+        # Merge tokens according to the vocab
+        for token,sequence in vocabulary:
+            self.__merge_tokens(tokenized_text, sequence, token)
+        
+        return tokenized_text[0]
