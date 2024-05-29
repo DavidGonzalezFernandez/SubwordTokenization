@@ -3,16 +3,15 @@ from .tokenization_method import TokenizationMethod
 
 class BytePairEncoding(TokenizationMethod):
     __space_token = "_"
-    __space_char = " "
-
+    
     def create_vocabulary(self, corpus: List[str], vocab_size: int) -> List[tuple]:
         # The vocab (the keys are the tokens, the values are the sequences)
         vocab = []
 
         # Replace the whitespace with some other character
         for i,sentence in enumerate(corpus):
-            corpus[i] = sentence.replace(BytePairEncoding.__space_char, BytePairEncoding.__space_token)
-        
+            corpus[i] = sentence.replace(self.__space_char, BytePairEncoding.__space_token)
+
         # Preprocess:
         # 1. Convert the corpus into a list of lists
         # 2. Create a new token for each individual character in the corpus
@@ -78,7 +77,7 @@ class BytePairEncoding(TokenizationMethod):
         tokenized_text = []
 
         # Replace spaces with its own token
-        text = text.replace(BytePairEncoding.__space_char, BytePairEncoding.__space_token)
+        text = text.replace(self.__space_char, BytePairEncoding.__space_token)
 
         # Replace all individual characters with tokens
         for c in text:

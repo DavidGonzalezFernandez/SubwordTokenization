@@ -2,8 +2,6 @@ from .tokenization_method import TokenizationMethod
 from typing import List, Dict, Union, Tuple
 
 class WordPiece(TokenizationMethod):
-    __space_token = "_"
-    __space_char = " "
     __prefix_char_inside_word = "##"
 
     def create_vocabulary(self, corpus: List[str], vocab_size: int) -> List[tuple]:
@@ -22,7 +20,7 @@ class WordPiece(TokenizationMethod):
 
             for c in sentence:
                 # Check if the character is the beginning of a word (leave as it is), or is inside the word (add the prefix)
-                is_space = c == WordPiece.__space_char
+                is_space = c == self.__space_char
                 c = (c) if (was_last_character_space or is_space) else (self.__prefix_char_inside_word+c)
                 tk_list = [tk for (tk,seq) in vocab if seq == c]
                 if any(tk_list):
