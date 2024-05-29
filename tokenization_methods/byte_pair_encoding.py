@@ -13,24 +13,23 @@ class BytePairEncoding(TokenizationMethod):
         for i,sentence in enumerate(corpus):
             corpus[i] = sentence.replace(BytePairEncoding.__space_char, BytePairEncoding.__space_token)
         
-        # Set to keep track of the individual characters that are inside the vocabulary
-        added_characters = set()
-
         # Preprocess:
-        # Convert the corpus into a list of lists
-        # Create a new token for each individual character in the corpus
-        # Convert all the characters into tokens
+        # 1. Convert the corpus into a list of lists
+        # 2. Create a new token for each individual character in the corpus
+        # 3. Convert all the characters into tokens
         tokenized_corpus: List[list] = []
         for sentence in corpus:
             tokenized_corpus.append([])
             for c in sentence:
-                if c not in added_characters:
-                    self.__create_token(vocab, c, c)
-                    added_characters.add(c)
-                tokenized_corpus[-1].append(c)
+                tk_list = [tk for (tk,seq) in vocab if seq == c]
+                if any(tk_list):
+                    assert len(tk_list) == 1
+                    tk = tk_list[0]
+                else:
+                    tk = self.__create_token(vocab, c, c)
+                tokenized_corpus[-1].append(tk)
         
         del corpus
-        del added_characters
 
         # Iterate until the vocabulary reaches the maximum length
         while len(vocab) < vocab_size:
