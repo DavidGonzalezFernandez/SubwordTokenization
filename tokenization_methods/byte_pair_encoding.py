@@ -1,6 +1,8 @@
 from typing import List
 from .tokenization_method import TokenizationMethod
 
+space_char = " "
+
 class BytePairEncoding(TokenizationMethod):
     __space_token = "_"
     
@@ -10,7 +12,7 @@ class BytePairEncoding(TokenizationMethod):
 
         # Replace the whitespace with some other character
         for i,sentence in enumerate(corpus):
-            corpus[i] = sentence.replace(self.__space_char, BytePairEncoding.__space_token)
+            corpus[i] = sentence.replace(space_char, BytePairEncoding.__space_token)
 
         # Preprocess:
         # 1. Convert the corpus into a list of lists
@@ -77,7 +79,7 @@ class BytePairEncoding(TokenizationMethod):
         tokenized_text = []
 
         # Replace spaces with its own token
-        text = text.replace(self.__space_char, BytePairEncoding.__space_token)
+        text = text.replace(space_char, BytePairEncoding.__space_token)
 
         # Replace all individual characters with tokens
         for c in text:

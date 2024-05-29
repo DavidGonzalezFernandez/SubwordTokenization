@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from typing import List
 
 class TokenizationMethod(ABC):
-    __space_char = " "
-    
     @abstractmethod
     def create_vocabulary(self, corpus: List[str], vocab_size: int):  # TODO add return type
         """
