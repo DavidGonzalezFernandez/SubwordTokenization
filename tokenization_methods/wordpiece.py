@@ -1,5 +1,5 @@
 from .tokenization_method import TokenizationMethod
-from typing import List, Dict, Union, Tuple
+from typing import List
 
 space_char = " "
 
@@ -72,6 +72,7 @@ class WordPiece(TokenizationMethod):
                     i += 1
         
     def __get_highests_scoring_pair(self, corpus):
+        """Returns the pair of tokens that has the highest score"""
         pairs, tokens = {}, {}
         for sentence in corpus:
             if len(sentence) <= 1:
@@ -86,7 +87,7 @@ class WordPiece(TokenizationMethod):
         else:
             return None
     
-    def tokenize_text(self, vocabulary, text: str):
+    def tokenize_text(self, vocabulary: List[tuple], text: str):
         tokenized_text = []
 
         # Replace all individual characters with tokens

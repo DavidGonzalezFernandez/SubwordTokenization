@@ -65,6 +65,7 @@ class BytePairEncoding(TokenizationMethod):
                     i += 1
 
     def __get_most_frequent_pair(self, corpus: List[list]):
+        """Returns the most frequent pair of tokens"""
         pairs = {}
         for sentence in corpus:
             for t1,t2 in zip(sentence, sentence[1:]):
@@ -75,7 +76,7 @@ class BytePairEncoding(TokenizationMethod):
         else:   # There are no pairs
             return None
 
-    def tokenize_text(self, vocabulary, text: str):
+    def tokenize_text(self, vocabulary: List[tuple], text: str):
         tokenized_text = []
 
         # Replace spaces with its own token

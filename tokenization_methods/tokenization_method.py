@@ -3,7 +3,7 @@ from typing import List
 
 class TokenizationMethod(ABC):
     @abstractmethod
-    def create_vocabulary(self, corpus: List[str], vocab_size: int):  # TODO add return type
+    def create_vocabulary(self, corpus: List[str], vocab_size: int, **kwargs):
         """
         Creates
         
@@ -13,34 +13,31 @@ class TokenizationMethod(ABC):
             A list of string that makes up the training corpus from which to learn the tokens.
         vocab_size: int
             The maximum size for the vocabulary.
+        kwargs:
+            Other parameters that are optional in some concrete implementations
         
         Returns
         -------
-        vocab: TODO add 
+        vocab
             The learned vocabulary.
         """
         pass
 
-
     @abstractmethod
-    def tokenize_text(self, vocabulary, text: str):  # TODO add return type
+    def tokenize_text(self, vocabulary, text: str):
         """
-        Transform the text into tokens
+        Transform the text into tokens.
 
         Arguments
         ---------
-        vocabulary: TODO add type
+        vocabulary
             The vocabulary learned in the training phase. 
         text: str
             The text to tokenize.
 
         Returns
         -------
-        tokens: TODO add type
+        tokens
             The text as tokens
         """
         pass
-
-    @classmethod
-    def get_all_characters():
-        return "a b c d e f g h i j k l m n ñ o p q r s t u v w x y z".split(" ")
