@@ -1,5 +1,2 @@
 # Compiled python bytecode
 *.pyc
-
-# My own trials
-*.ipynb
