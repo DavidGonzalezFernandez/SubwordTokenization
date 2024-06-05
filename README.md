@@ -11,3 +11,4 @@ The implementations can be found in the folder `tokenization_methods`. Inside of
 - `wordpiece.py`: contains class `WordPiece` with the concrete implementation of the WordPiece method.
 
 ## Usage
+To reproduce the experiment follow the steps in [train_and_tokenize.ipynb](train_and_tokenize.ipynb).
